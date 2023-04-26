@@ -22,7 +22,7 @@ wire  y;
 parameter ID 10
 **/
 /*PPSTART*/
-bus_keeper #(
+non_ansi #(
   .ID(10)) u_non_ansi (
   .clk (clk),
   .a (a),

@@ -1,6 +1,6 @@
 // bar is just an empty module with some interesting ports.
 
-module bus_keeper #(
+module non_ansi #(
   parameter int ID = 0
 ) (
 	clk,
@@ -13,6 +13,10 @@ module bus_keeper #(
 localparam WIDTH = 32;
 
 localparam BYTES = WIDTH/8;
+
+function int foo(int x, int y);
+	return x + y;
+endfunction : foo
 
 input logic clk;
 
