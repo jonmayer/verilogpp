@@ -263,10 +263,10 @@ sub register {
   my %ctx = {
     ALWAYS_FF => always_ff(),
     CLK => $clk,
+    SRESET => $config{"synchronous_reset"},
     RESET_N => $reset_n,
     REG => $reg,
     NEXT => $next,
-    SRESET => $config{"synchronous_reset"},
     DELAY => $delay,
     INITIAL => $initial,
     IFCLAUSE => $ifclause,
