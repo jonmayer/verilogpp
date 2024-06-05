@@ -1769,11 +1769,6 @@ sub keep_track_of_used_net {
   my $mapped_signal = shift;
   my $mapper = shift;
 
-  return if ($signal eq 'clk');
-  return if ($signal eq 'rst');
-  return if ($signal eq $main::config{"clock"});
-  return if ($signal eq $main::config{"reset_n"});
-
   my $port = $prototype->GetPortByName($signal);
   my $normalized_net = $mapped_signal;
   $normalized_net =~ s/\s*\[ [^\]]* \]\s*//gx;  # strip away slice operators.
@@ -2598,6 +2593,12 @@ sub expand_autonet($$) {
     if ($my_interface->HasPort($s)) {
       next;
     }
+
+    # for apocryphal reasons / backwards compatibility:
+    next if ($s eq 'clk');
+    next if ($s eq 'rst');
+    next if ($s eq $main::config{"clock"});
+    next if ($s eq $main::config{"reset_n"});
 
     # Skip constants and expressions
     next unless ($s =~ m/[[:alpha:]]/);  # Must have a letter
