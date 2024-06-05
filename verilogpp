@@ -2312,6 +2312,12 @@ sub expand_autonc($$) {
 
     if (!$found) {next;}
 
+    # for apocryphal reasons / backwards compatibility:
+    next if ($s eq 'clk');
+    next if ($s eq 'rst');
+    next if ($s eq $main::config{"clock"});
+    next if ($s eq $main::config{"reset_n"});
+
     if ($ref->NumberOfConnections('inout') > 0) {
       # ignore inout signals
     } elsif ($ref->NumberOfConnections('modport') > 0) {
