@@ -1292,7 +1292,7 @@ sub MakeCompatibleWith($$) {
 sub CountConnection {
   my $self = shift;
   my $dir = shift;
-  if ($dir =~ m/^modport /) { $dir = "modport"; }
+  if ($dir =~ m/^modport (\S+)/) { $dir = "modport"; $self->{intf_modport} = $1; }
   # Indicate that this signal is connected to a port of the indicated type.
   $self->{count}->{$dir} += 1;
 }
@@ -1345,7 +1345,7 @@ sub Declaration() {
   if ($width =~ m/(^(?:\s*signed)?\s*\[)|(^\s*$)/) {
     # net is an array or single-element:
     $r = [$type, $width, $s];
-  } else {
+  }  else {
     # array is a struct, so don't declare a nettype:
     $r = [$width, $s];
   }
@@ -1356,19 +1356,18 @@ sub Declaration() {
 # Returns an array of tokens forming a port declaration
 sub Port {
   my $self = shift;
-  my $dir = 'output';
+  my @return = ('output');
   if ($self->NumberOfConnections('inout') > 0) {
-    $dir = 'inout';
+    @return = ('inout');
   } elsif ($self->NumberOfConnections('output') == 0) {
-    $dir = 'input';
-  }
-  my @return = ($dir);
-  # A hack: if a port is named "_if", we assume it is an interface
-  # and doesn't need a direction.
-  if ($self->{width} =~ m/_if\b/) {
-    @return = ();
+    @return = ('input');
   }
   push @return, @{$self->Declaration(1)};
+  if ($self->NumberOfConnections('modport') == 1) {
+    # this is an interface.  Replace the first two elements.
+    shift @return for 1..2;
+    unshift(@return, $self->{intf_modport});
+  }
   return @return;
 }
 
