@@ -2005,7 +2005,7 @@ module interface.
 Options:
 
 * --pretty  Turns on "pretty print" style (equivalent to --style=pretty).
-* --style   Sets the output style ("default", "v2", "pretty")
+* --style   Sets the output style ("default", "v2", "pretty", "v3")
 * --compact Use compact naming for ports whose names match the connecting
             signal (ie. ".clk" instead of ".clk(clk)").
 
@@ -2181,25 +2181,55 @@ sub expand_instantiate_with_prototype {
       print "${instancename} ();\n";
     }
     return;
-  }
-  # default style:
-  print "${mod} ";
-  # When in pretty-print mode, line up commas on the left
-  my $first_indent = ($prettyprint) ? "   " : "  ";
-  my $conjunction = ($prettyprint) ? "\n,  " : ",\n  ";
-  if (%{$mapper->{PARAMS}}) {
-    print "#(\n";
-    print $first_indent,
-          join($conjunction, @params),
-          ") ";
-  }
-  if ($#d >= 0) {
-    print "${instancename} (\n";
-    print $first_indent, join($conjunction, @d), "\n);\n";
+  } elsif ($style eq "v3") {
+    print "${mod} ";
+    if (%{$mapper->{PARAMS}}) {
+      print "#(\n";
+      for my $i (0..$#params) {
+        my $param = $params[$i];
+        my $conjunction = ",\n";
+        if ($i == $#params) { $conjunction = "\n"; }
+        $param =~ m/.(\S+)\s*\((.+)\)/;
+        printf("  .%-30s (%s)%s", $1, $2, $conjunction);
+      }
+      print ") ";
+    }
+    if ($#list_of_hookup_arrs >= 0) {
+      print "${instancename} (\n";
+      for my $i (0..$#list_of_hookup_arrs) {
+        my @hookup_arr = @{$list_of_hookup_arrs[$i]};
+        if ($hookup_arr[1] eq "") {
+          printf "  %-61s  %s\n", $hookup_arr[0], $hookup_arr[2];
+        } else {
+          printf "  %-30s %-30s  %s\n", $hookup_arr[0], $hookup_arr[1], $hookup_arr[2];
+        }
+      }
+      print(");\n")
+    } else {
+      # module has no ports.
+      print "${instancename} ();\n";
+    }
+    return;
   } else {
-    # module has no ports.
-    print "${instancename} ();\n";
-  }
+    # default style:
+    print "${mod} ";
+    # When in pretty-print mode, line up commas on the left
+    my $first_indent = ($prettyprint) ? "   " : "  ";
+    my $conjunction = ($prettyprint) ? "\n,  " : ",\n  ";
+    if (%{$mapper->{PARAMS}}) {
+      print "#(\n";
+      print $first_indent,
+            join($conjunction, @params),
+            ") ";
+    }
+    if ($#d >= 0) {
+      print "${instancename} (\n";
+      print $first_indent, join($conjunction, @d), "\n);\n";
+    } else {
+      # module has no ports.
+      print "${instancename} ();\n";
+    }
+  }  # end of style select
 }
 
 $MacroHelp{'AUTOINC'} = <<EOT ;
