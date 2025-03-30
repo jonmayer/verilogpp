@@ -1,0 +1,33 @@
+// inst_of_unpacked instantiates an unpacked from unpacked.v
+
+module inst_of_mod_with_interface (
+  input wire clk,
+  input wire reset_n,
+  /**AUTOINTERFACE**/
+/*PPSTART*/
+  axi4_if.completer             axi,
+  output            wire [15:0] fwd_data,
+  input             wire        fwd_ready,
+  output            wire        fwd_valid
+/*PPSTOP*/
+);
+
+/**AUTONET**/
+/*PPSTART*/
+/*PPSTOP*/
+
+/**INST mod_with_interface.v mod_with_interface  --style=v2
+  .rst_n (reset_n)
+**/
+/*PPSTART*/
+mod_with_interfaced mod_with_interface (
+  .clk,                  // input
+  .rst_n      (reset_n), // input
+  .axi,                  // modport axi4_if.completer
+  .fwd_data,             // output
+  .fwd_valid,            // output
+  .fwd_ready             // input
+);
+/*PPSTOP*/
+
+endmodule
