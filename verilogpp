@@ -2190,7 +2190,7 @@ sub expand_instantiate_with_prototype {
         my $conjunction = ",\n";
         if ($i == $#params) { $conjunction = "\n"; }
         $param =~ m/.(\S+)\s*\((.+)\)/;
-        printf("  .%-30s (%s)%s", $1, $2, $conjunction);
+        printf("  .%-29s (%s)%s", $1, $2, $conjunction);
       }
       print ") ";
     }
@@ -2450,6 +2450,11 @@ sub expand_autointerface($$) {
   my $self = shift;
   my $macro = shift;
 
+  my $style = $main::config{"style"};
+  if ($macro =~ s/^(.*)--style=(\S+)/$1/) {
+    $style = $2;
+  }
+
   # parse the input and output ports of this module
   my $my_interface = new ModuleSpec()->parse_prototype($self->{text});
 
@@ -2489,7 +2494,22 @@ sub expand_autointerface($$) {
   }
 
   &main::Pad2DArray(\@ports, 2, 5);
-  print &main::TabularAlign(\@ports, ",\n"), "\n";
+  if ($style eq "v3") {
+    for my $i (0..$#ports) {
+      my @p = @{$ports[$i]};
+      @p = grep {!/^$/} @p;
+      if ($p[1] eq "input") { $p[1] = "input "; }
+      if ($p[1] eq "inout") { $p[1] = "inout "; }
+      print (join(" ", @p));
+      if ($i == $#ports) {
+        print "\n";
+      } else {
+        print ",\n";
+      }
+    }
+  } else {
+    print &main::TabularAlign(\@ports, ",\n"), "\n";
+  }
 }
 
 sub CountAssignments {

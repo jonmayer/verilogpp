@@ -1,0 +1,50 @@
+// inst_of_unpacked instantiates an unpacked from unpacked.v
+
+module inst_of_unpacked (
+  input wire clk,
+  input wire reset_n,
+  output [7:0] fee [0:10-1],
+  /**AUTOINTERFACE --style=v3 **/
+/*PPSTART*/
+  output wire [7:0] bar,
+  input  wire fee_en[0:10-1],
+  input  wire [7:0] foo[0:5],
+  input  wire foo_en[0:5]
+/*PPSTOP*/
+);
+
+/**AUTONET --init **/
+/*PPSTART*/
+
+/*PPSTOP*/
+
+
+/**INST unpacked.v u_unpacked --style=v3 **/
+/*PPSTART*/
+unpacked u_unpacked (
+  .clk,                                                          // input
+  .reset_n,                                                      // input
+  .foo,                                                          // input
+  .foo_en,                                                       // input
+  .bar                                                           // output
+);
+/*PPSTOP*/
+
+/**INST unpackedN.v u_unpackedN --style=v3
+parameter N 10
+s/^foo/fee/;
+**/
+/*PPSTART*/
+unpackedN #(
+  .N                             (10)
+) u_unpackedN (
+  .clk,                                                          // input
+  .reset_n,                                                      // input
+  .foo                           (fee),                          // input
+  .foo_en                        (fee_en),                       // input
+  .bar                                                           // output
+);
+/*PPSTOP*/
+
+
+endmodule
