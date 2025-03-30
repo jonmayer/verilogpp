@@ -14,6 +14,7 @@ module inst_of_mod_with_interface (
 
 /**AUTONET**/
 /*PPSTART*/
+
 /*PPSTOP*/
 
 /**INST mod_with_interface.v mod_with_interface  --style=v2
