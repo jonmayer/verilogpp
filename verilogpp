@@ -2632,6 +2632,11 @@ sub expand_autonet($$) {
     $skipif = 1;
   }
 
+  my $style = $main::config{"style"};
+  if ($macro =~ s/^(.*)--style=(\S+)/$1/) {
+    $style = $2;
+  }
+
   # parse the input and output ports of this module
   my $my_interface = new ModuleSpec()->parse_prototype($self->{text});
   $self->CountAssignments($my_interface);
